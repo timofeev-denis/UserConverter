@@ -37,6 +37,7 @@
             this.UsersGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.akriko,
             this.delo});
+            this.UsersGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.UsersGrid.Location = new System.Drawing.Point(12, 12);
             this.UsersGrid.Name = "UsersGrid";
             this.UsersGrid.Size = new System.Drawing.Size(556, 238);
