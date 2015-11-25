@@ -22,6 +22,7 @@ namespace UserConverter {
 
         public MainForm() {
             InitializeComponent();
+            this.FormBorderStyle = FormBorderStyle.FixedSingle; 
             CenterToScreen();
         }
         private string GetConnectionString() {
