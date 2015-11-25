@@ -23,6 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.UsersGrid = new System.Windows.Forms.DataGridView();
             this.ConvertButton = new System.Windows.Forms.Button();
             this.executor_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -85,6 +86,7 @@
             this.ClientSize = new System.Drawing.Size(947, 519);
             this.Controls.Add(this.ConvertButton);
             this.Controls.Add(this.UsersGrid);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Конвертация исполнителей";

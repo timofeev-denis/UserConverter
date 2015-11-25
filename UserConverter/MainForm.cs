@@ -69,6 +69,10 @@ namespace UserConverter {
             } catch (Exception e) {
                 MessageBox.Show("При чтении данных из базы данных произошла ошибка:\n\n" + e.Message);
             }
+            if (UsersGrid.Rows.Count == 0) {
+                MessageBox.Show("Отсутствуют неотконвертированные исполнители", "Конвертация исполнителей", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ConvertButton.Enabled = false;
+            }
             FillDeloDepartmentsColumn();
             return true;
         }
@@ -135,30 +139,39 @@ namespace UserConverter {
             return String.Format("UPDATE akriko.appeal SET ISPOLNITEL_CIK_ID=NULL, ISPOLN_DEPT_CIK_DELO='{0}', ISPOLNITEL_CIK_DELO='{1}', ISPOLN_DEPT_CIK_DELO_T='{2}', ISPOLNITEL_CIK_DELO_T='{3}' WHERE ISPOLNITEL_CIK_ID='{4}'", 
                 deloPerson.GetDepartmentID(), deloPerson.GetPersonID(), deloPerson.GetDepartmentName(), deloPerson.GetPersonName(), akrikoID );
         }
-        private void UpdateExecutors(string executor_id, DeloPerson deloPerson) {
+        private bool UpdateExecutors(string executor_id, DeloPerson deloPerson) {
+            bool result = false;
             cmd = conn.CreateCommand();
             cmd.CommandText = MakeQuery(executor_id, deloPerson);
             System.Diagnostics.Trace.WriteLine(cmd.CommandText);
             try {
                 cmd.ExecuteNonQuery();
-                transaction.Commit();
+                result = true;
             } catch (Exception e) {
-                transaction.Rollback();
                 MessageBox.Show("При записи информации об исполнителях в базу данных произошла ошибка:\n\n" + e.Message);
+                this.transaction.Rollback();
             }
             if (cmd != null) {
                 cmd.Dispose();
             }
+            return result;
         }
         private void ConvertButton_Click(object sender, EventArgs e) {
+            bool result = true;
             foreach(DataGridViewRow r in UsersGrid.Rows) {
                 if (r.Cells["delo"].Value == null) {
                     continue;
                 }
                 Backup(r.Cells["executor_id"].Value.ToString());
-                UpdateExecutors(r.Cells["executor_id"].Value.ToString(), DeloPersons[r.Cells["delo"].Value.ToString()]);
-                this.Close();
+                if (!UpdateExecutors(r.Cells["executor_id"].Value.ToString(), DeloPersons[r.Cells["delo"].Value.ToString()])) {
+                    result = false;
+                }
             }
+            if (result) {
+                this.transaction.Commit();
+                MessageBox.Show("Конвертация успешно завершена", "Конвертация исполнителей", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            this.Close();
         }
     }
 }
